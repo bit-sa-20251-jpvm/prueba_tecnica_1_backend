@@ -5,8 +5,8 @@ const {getAllUsers, loginUser, createUser, updateUser, findUser, deleteUser} = r
 router.get('/get-users',getAllUsers);
 router.post('/create-user',createUser);
 router.post('/login-user',loginUser);
-router.get('/find-user',findUser);
+router.get('/find-user/:id',findUser);
 router.put('/update-user',updateUser);
-router.delete('/delete-user',deleteUser);
+router.delete('/delete-user/:id',deleteUser);
 
 module.exports = router;

@@ -70,7 +70,7 @@ const loginUser = async (req,res) =>{
 }
 
 const findUser = async(req,res) =>{
-    const {username} = req.body;
+    const {username} = {username : req.params.id};
     if(!username){
         return res.status(400).json({msg:'Ingrese el usuario que desea buscar'});
     }
@@ -93,13 +93,20 @@ const findUser = async(req,res) =>{
 }
 
 const updateUser = async(req,res) =>{
-    const {username,password} = req.body;
-    if(!password){
-        return res.status(400).json({msg:'Ingrese contraseña nueva'});
+    const {username,password,updatedPassword} = req.body;
+    console.log(username);
+    console.log(password);
+    console.log(updatedPassword);
+    if(!updatedPassword || !password){
+        return res.status(400).json({msg:'Ingrese la contraseña actual y la nueva'});
     }
 
     try {
-        await User.updateOne({username},{password});
+        const dbUser = await User.findOne({username});
+        if(password !== dbUser.password){
+            return res.status(400).json({msg:'Contraseña incorrecta'});
+        }
+        await User.updateOne({username},{password:updatedPassword});
         return res.status(200).json({msg:'Contraseña actualizada exitosamente'});
     } catch (error) {
         console.log(error);
@@ -108,15 +115,11 @@ const updateUser = async(req,res) =>{
 }
 
 const deleteUser = async(req,res) =>{
-    const {username,password} = req.body;
-    if(!password){
-        return res.status(400).json({msg:'Ingrese la contraseña'});
-    }
+    const {username} = {username : req.params.id};
+    console.log(username);
+    
     try {
         const dbUser = await User.findOne({username});
-        if(password !== dbUser.password){
-            return res.status(400).json({msg:'Contraseña incorrecta'});
-        }
         await User.deleteOne({username});
         return res.status(200).json({msg:'Usuario eliminado exitosamente'});
     } catch (error) {
